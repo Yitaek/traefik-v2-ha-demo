@@ -1,8 +1,8 @@
 # Traefik HA on Kubernetes with Cert-Manager
 
-Traefik v2 removed support for storing ACME/Let's Encrypt certificates in a KV store, citing bugs with the raft consensus algorithm ([#4851](https://github.com/containous/traefik/issues/4851), [#3487](https://github.com/containous/traefik/issues/3487), [#5047](https://github.com/containous/traefik/issues/5047), [#3833](https://github.com/containous/traefik/issues/3833)). Automatic cert generation moved to TraefikEE, leaving open-source users to either run non-HA version or implement custom solution to certificate management. 
+Traefik v2 removed support for storing ACME/Let's Encrypt certificates in a KV store, citing bugs with the raft consensus algorithm ([#4851](https://github.com/containous/traefik/issues/4851), [#3487](https://github.com/containous/traefik/issues/3487), [#5047](https://github.com/containous/traefik/issues/5047), [#3833](https://github.com/containous/traefik/issues/3833)). Automatic cert management feature moved to TraefikEE, leaving open-source users to either run a non-HA version or implement a custom solution to certificate management. 
 
-Traefik documentation recommends using [Cert-Manager](https://github.com/jetstack/cert-manager) as the Certificate Controller and notes limited support for the Ingress Route CRD:
+Traefik documentation recommends using [cert-manager](https://github.com/jetstack/cert-manager) as the Certificate Controller and notes limited support for the Ingress Route CRD:
 
 ```
 When using the Traefik Kubernetes CRD Provider, unfortunately Cert-Manager cannot interface directly with the CRDs yet, but this is being worked on by our team. A workaround is to enable the Kubernetes Ingress provider to allow Cert-Manager to create ingress objects to complete the challenges. Please note that this still requires manual intervention to create the certificates through Cert-Manager, but once created, Cert-Manager will keep the certificate renewed.
@@ -36,7 +36,7 @@ Cert-Manager is an open-source tool to automate the issuance and renewal of TLS 
 
 ![cert-manager high level overview diagram](https://cert-manager.io/images/high-level-overview.svg)
 
-We will install it in namespace `cert-manager`:
+We will install it in the namespace `cert-manager`:
 
 ```
 $ kubectl create namespace cert-manager
@@ -52,14 +52,14 @@ $ helm install \
   --set installCRDs=true
 ```
 
-Wait for all the Cert-Manager pods to come up:
+Wait for all the cert-manager pods to come up:
 
 ```
 $ kubectl get pods -n cert-manager -w 
 ```
 
 ## Deploy an Application 
-For the sake of the demo, we will deploy the `whoami` app in the `default` namesapce (see under `whoami` directory for deployment, service, and ingress files). You can replace this with your application or well-known Helm chart (e.g. Grafana, Kibana, etc).
+For the sake of the demo, we will deploy the `whoami` app in the `default` namespace (see under `whoami` directory for deployment, service, and ingress files). You can replace this with your application or well-known Helm chart (e.g. Grafana, Kibana, etc).
 
 Replace `whoami.example.com` with your FQDN and deploy:
 
@@ -99,4 +99,4 @@ $ kubectl describe certificate whoami-cert
 
 You can also look at Traefik's debug logs to watch the cert become active. 
 
-Finally, point the DNS record to the IP address of the Load Balancer to see a TLS enabled site backed by HA Traefik + Cert-Manager. Optionally, you can deploy the HTTPS redirect middleware for completeness. 
+Finally, point the DNS record to the IP address of the Load Balancer to see a TLS enabled site backed by HA Traefik + cert-manager. Optionally, you can deploy the HTTPS redirect middleware for completeness. 
