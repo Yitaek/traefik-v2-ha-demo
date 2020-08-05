@@ -1,0 +1,14 @@
+---
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: whoami-cert
+  namespace: whoami
+spec:
+  commonName: whoami.example.com
+  secretName: whoami-cert
+  dnsNames:
+    - whoami.example.com
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
